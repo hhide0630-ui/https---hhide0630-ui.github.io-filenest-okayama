@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>FileNest - メディア＆ファイル</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151c2e;--panel2:#1d2740;--text:#f4f7ff;--muted:#9aa8c4;--accent:#69d5b0;--line:#2b3650}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#111a30,#080c16 60%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:780px;margin:auto;min-height:100dvh;padding:18px 15px 100px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 18px}.brand{font-size:22px;font-weight:800;letter-spacing:-.5px}.brand span{color:var(--accent)}.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:11px}
+.hero{background:linear-gradient(135deg,#1d3a4b,#1c2440);border:1px solid #34455e;border-radius:22px;padding:18px;margin-bottom:18px}.hero h1{font-size:21px;margin:0 0 7px}.hero p{font-size:13px;color:#c0cee0;line-height:1.6;margin:0 0 14px}
+button,.button{border:0;border-radius:12px;padding:11px 14px;font-size:13px;font-weight:700;background:var(--accent);color:#06251c;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button.secondary,.button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#4a2634;color:#ffdce4}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0 22px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px}.stat strong{display:block;font-size:19px}.stat small{color:var(--muted);font-size:11px}
+h2{font-size:16px;margin:20px 0 10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.search{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;font-size:14px}
+.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:#0a0e19ee;backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:10px 8px max(10px,env(safe-area-inset-bottom));z-index:5}.tabs button{background:transparent;color:var(--muted);flex:1;max-width:170px;padding:9px 5px;flex-direction:column;font-size:11px;gap:4px}.tabs button.active{color:var(--accent)}
+.filelist{display:grid;gap:8px}.file{display:flex;align-items:center;gap:11px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:15px;min-width:0}.fileicon{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:#24324b;font-size:21px;flex-shrink:0}.filemeta{flex:1;min-width:0}.filename{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.detail{font-size:11px;color:var(--muted);margin-top:5px}.fileactions{display:flex;gap:5px}.fileactions button{padding:8px;font-size:11px}
+.empty{padding:28px 14px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed #34415b;border-radius:16px;line-height:1.7}
+.section{display:none}.section.active{display:block}.folderchips{display:flex;gap:7px;overflow:auto;padding-bottom:5px}.folderchips button{white-space:nowrap}
+.notice{font-size:11px;color:var(--muted);line-height:1.6;margin-top:15px}.player{background:#000;border-radius:16px;overflow:hidden;margin-top:12px}.player video,.player audio{display:block;width:100%}.preview{width:100%;max-height:55vh;object-fit:contain;background:#070a10;border-radius:14px;margin-top:12px}
+label.upload{display:inline-flex}.hide{display:none!important}.modalback{position:fixed;inset:0;background:#0009;display:none;align-items:end;justify-content:center;z-index:10}.modalback.open{display:flex}.modal{width:min(100%,600px);background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;padding:20px 16px max(20px,env(safe-area-inset-bottom))}.modal h3{margin:0 0 10px}.modal input,.modal select{width:100%;background:#0b1020;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:12px;margin:7px 0 12px}.row{display:flex;gap:8px}.row>*{flex:1}
+@media(min-width:620px){.app{padding-top:28px}.filelist{grid-template-columns:1fr 1fr}.file{align-items:flex-start}.fileactions{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="top"><div><div class="brand">File<span>Nest</span></div><div class="sub">あなたのファイルを、ひとつに。</div></div><div class="pill">試作品 v0.1</div></header>
+ <section class="hero"><h1>メディアも書類も、ここで管理。</h1><p>写真・動画・音声・PDFなどを取り込み、検索・整理・再生できます。まずは端末内のファイルを扱う試作品です。</p><label class="button upload">＋ ファイルを取り込む<input id="fileInput" class="hide" type="file" multiple accept="video/*,audio/*,image/*,.pdf,.txt,.csv,.json,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"></label></section>
+ <div class="stats"><div class="stat"><strong id="count">0</strong><small>ファイル</small></div><div class="stat"><strong id="size">0 MB</strong><small>合計サイズ</small></div><div class="stat"><strong id="foldersCount">1</strong><small>フォルダ</small></div></div>
+ <section id="home" class="section active">
+  <h2>最近追加したファイル</h2><div class="toolbar"><input id="search" class="search" placeholder="ファイル名を検索"><button class="secondary" onclick="openFolderModal()">＋ フォルダ</button></div>
+  <div id="folderChips" class="folderchips"></div><div id="fileList" class="filelist"></div>
+ </section>
+ <section id="playerSection" class="section"><h2>プレーヤー</h2><div id="playerContent" class="empty">ファイル一覧から動画・音声・画像を選択してください。</div></section>
+ <section id="folders" class="section"><h2>フォルダ管理</h2><div class="toolbar"><button onclick="openFolderModal()">＋ フォルダを作成</button></div><div id="folderList" class="filelist"></div></section>
+ <section id="settings" class="section"><h2>設定・この試作品について</h2><div class="file"><div class="fileicon">🔒</div><div class="filemeta"><div class="filename">端末内での管理</div><div class="detail">ファイル内容を外部サーバーにアップロードしません。ブラウザの保存領域を使用します。</div></div></div><div class="file"><div class="fileicon">⚠️</div><div class="filemeta"><div class="filename">試作品の制限</div><div class="detail">Safariの保存容量・対応形式に制限があります。アプリを削除したり、ブラウザデータを消去すると、保存したファイルが失われる場合があります。大切な原本は別に保管してください。</div></div></div><div class="file"><div class="fileicon">⚖️</div><div class="filemeta"><div class="filename">権利を守って利用</div><div class="detail">自分が所有するファイル、または保存・複製の許可があるファイルを使用してください。保護技術や配信サービスの制限を回避する機能はありません。</div></div></div><div class="toolbar"><button class="secondary" onclick="exportList()">ファイル一覧を書き出す</button><button class="danger" onclick="clearAll()">全データを削除</button></div></section>
+ <p class="notice">これは機能確認用のWeb試作品です。App Store版では、より堅牢なファイル保存、バックグラウンド再生、ピクチャ・イン・ピクチャ、ZIP/RAR展開、対応書類の閲覧、課金・広告などを個別に実装・検証する必要があります。</p>
+</div>
+<nav class="tabs"><button class="active" data-tab="home" onclick="tab('home',this)">⌂<span>ファイル</span></button><button data-tab="playerSection" onclick="tab('playerSection',this)">▷<span>再生</span></button><button data-tab="folders" onclick="tab('folders',this)">▦<span>フォルダ</span></button><button data-tab="settings" onclick="tab('settings',this)">⚙<span>設定</span></button></nav>
+<div id="folderModal" class="modalback" onclick="if(event.target===this)closeFolderModal()"><div class="modal"><h3>フォルダを作成</h3><label for="folderName">フォルダ名</label><input id="folderName" maxlength="40" placeholder="例：旅行、仕事、音楽"><div class="row"><button class="secondary" onclick="closeFolderModal()">キャンセル</button><button onclick="createFolder()">作成する</button></div></div></div>
+<script>
+const DB='filenest-prototype-v1', STORE='files';
+let db, items=[], folders=['すべて'], currentFolder='すべて', currentTab='home', currentObjectUrl=null;
+const $=id=>document.getElementById(id);
+function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{const d=r.result;const s=d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});s.createIndex('name','name',{unique:false})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function tx(mode='readonly'){return db.transaction(STORE,mode).objectStore(STORE)}
+function getAll(){return new Promise((res,rej)=>{const r=tx().getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function save(item){return new Promise((res,rej)=>{const r=tx('readwrite').add(item);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function update(item){return new Promise((res,rej)=>{const r=tx('readwrite').put(item);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+function remove(id){return new Promise((res,rej)=>{const r=tx('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+function fmt(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(2)+' MB'}
+function kind(f){const t=f.type||'';if(t.startsWith('video/'))return 'video';if(t.startsWith('audio/'))return 'audio';if(t.startsWith('image/'))return 'image';if(t==='application/pdf'||f.name.toLowerCase().endsWith('.pdf'))return 'pdf';if(/\.(zip|rar)$/i.test(f.name))return 'archive';return 'file'}
+function ico(k){return ({video:'🎬',audio:'🎵',image:'🖼️',pdf:'📕',archive:'🗜️',file:'📄'})[k]||'📄'}
+async function refresh(){items=await getAll();render()}
+function render(){const q=$('search').value.toLowerCase();const filtered=items.filter(x=>(currentFolder==='すべて'||x.folder===currentFolder)&&x.name.toLowerCase().includes(q)).sort((a,b)=>b.created-a.created);$('count').textContent=items.length;$('size').textContent=(items.reduce((s,x)=>s+x.size,0)/1048576).toFixed(1)+' MB';$('foldersCount').textContent=folders.length;
+$('folderChips').innerHTML='';folders.forEach(f=>{const b=document.createElement('button');b.className=(f===currentFolder?'':'secondary');b.textContent=f;b.onclick=()=>{currentFolder=f;render()};$('folderChips').append(b)});
+const list=$('fileList');list.innerHTML='';if(!filtered.length){list.innerHTML='<div class="empty">ファイルはまだありません。<br>「ファイルを取り込む」から追加できます。</div>'}else filtered.forEach(x=>{const el=document.createElement('div');el.className='file';const k=kind({name:x.name,type:x.type});el.innerHTML=`<div class="fileicon">${ico(k)}</div><div class="filemeta"><div class="filename" title="${esc(x.name)}">${esc(x.name)}</div><div class="detail">${fmt(x.size)} ・ ${esc(x.folder||'未分類')}</div></div><div class="fileactions"><button class="secondary" data-open="${x.id}">開く</button><button class="secondary" data-more="${x.id}">•••</button></div>`;el.querySelector('[data-open]').onclick=()=>play(x.id);el.querySelector('[data-more]').onclick=()=>actions(x.id);list.append(el)});
+const fl=$('folderList');fl.innerHTML='';folders.filter(f=>f!=='すべて').forEach(f=>{const count=items.filter(x=>x.folder===f).length;const el=document.createElement('div');el.className='file';el.innerHTML=`<div class="fileicon">📁</div><div class="filemeta"><div class="filename">${esc(f)}</div><div class="detail">${count} ファイル</div></div><button class="secondary">開く</button>`;el.querySelector('button').onclick=()=>{currentFolder=f;tab('home',document.querySelector('[data-tab="home"]'));render()};fl.append(el)})}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('fileInput').addEventListener('change',async e=>{const files=[...e.target.files];for(const f of files){try{await save({name:f.name,type:f.type||'',size:f.size,created:Date.now(),folder:currentFolder==='すべて'?'未分類':currentFolder,blob:f})}catch(err){alert('保存できませんでした。ブラウザの保存容量上限の可能性があります。')}}e.target.value='';await refresh()});
+$('search').addEventListener('input',render);
+function tab(id,btn){currentTab=id;document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b===btn));}
+async function play(id){const x=items.find(a=>a.id===id);if(!x)return;tab('playerSection',document.querySelector('[data-tab="playerSection"]'));const c=$('playerContent');c.innerHTML='';if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=URL.createObjectURL(x.blob);const k=kind(x);const title=document.createElement('h3');title.textContent=x.name;c.append(title);
+if(k==='video'||k==='audio'){const wrap=document.createElement('div');wrap.className='player';const media=document.createElement(k==='video'?'video':'audio');media.controls=true;media.src=currentObjectUrl;media.playsInline=true;wrap.append(media);c.append(wrap)}
+else if(k==='image'){const img=document.createElement('img');img.className='preview';img.src=currentObjectUrl;c.append(img)}
+else if(k==='pdf'){const frame=document.createElement('iframe');frame.src=currentObjectUrl;frame.style='width:100%;height:65vh;border:0;border-radius:12px;background:white';c.append(frame)}
+else{const p=document.createElement('div');p.className='empty';p.textContent=k==='archive'?'ZIP/RARの展開は次の開発段階で実装します。':'この形式のプレビューは未対応です。ファイル自体は保存されています。';c.append(p)}
+const down=document.createElement('a');down.href=currentObjectUrl;down.download=x.name;down.className='button';down.style.marginTop='12px';down.textContent='ファイルを書き出す';c.append(down)}
+function actions(id){const x=items.find(a=>a.id===id);if(!x)return;const action=prompt('操作を選択：\\n1 = 名前変更\\n2 = フォルダへ移動\\n3 = 書き出す\\n4 = 削除','1');if(action==='1'){const n=prompt('新しいファイル名',x.name);if(n&&n.trim()){x.name=n.trim();update(x).then(refresh)}}else if(action==='2'){const opts=folders.filter(f=>f!=='すべて');const dest=prompt('移動先フォルダ名（既存名を入力）\\n'+opts.join(' / '),x.folder);if(dest&&opts.includes(dest)){x.folder=dest;update(x).then(refresh)}else if(dest)alert('既存のフォルダ名を入力してください。')}else if(action==='3'){const url=URL.createObjectURL(x.blob);const a=document.createElement('a');a.href=url;a.download=x.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}else if(action==='4'&&confirm('このファイルを削除しますか？'))remove(id).then(refresh)}
+function openFolderModal(){$('folderModal').classList.add('open');$('folderName').value='';$('folderName').focus()}function closeFolderModal(){$('folderModal').classList.remove('open')}
+function createFolder(){const n=$('folderName').value.trim();if(!n)return;if(folders.includes(n)||n==='すべて'){alert('同じ名前のフォルダがあります。');return}folders.push(n);currentFolder=n;closeFolderModal();render()}
+function exportList(){const data=items.map(x=>({name:x.name,type:x.type,size:x.size,folder:x.folder,created:new Date(x.created).toISOString()}));const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='filenest-file-list.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1500)}
+async function clearAll(){if(!confirm('保存した全ファイルを削除します。この操作は取り消せません。'))return;await new Promise((res,rej)=>{const r=tx('readwrite').clear();r.onsuccess=res;r.onerror=rej});folders=['すべて'];currentFolder='すべて';if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);await refresh()}
+(async()=>{try{db=await openDB();await refresh()}catch(e){$('fileList').innerHTML='<div class="empty">このブラウザでは保存機能を利用できません。Safariで開いてください。</div>'}})();
+</script>
+</body>
+</html>
